@@ -12,7 +12,24 @@ get_header();
                 <div class="row align-items-center">
                     <div class="col-lg-6 col-md-6 col-12">
                         <div class="banner-left-sec" data-aos="fade-right">
-                            <h2 class="section-title">
+                            <?php 
+                            $set = get_field('heading_set');
+                            if ($set) : 
+                                $style = '';
+                                if (!empty($set['font_color'])) $style .= "color:{$set['font_color']} !important;";
+                                ?>
+                                <style>
+                                    @media screen and (min-width: 1400px){
+                                        .paid-services-details-page .section-title{
+                                            <?php if (!empty($set['font_size'])) echo "font-size:{$set['font_size']}px!important ;"; ?>
+                                        }
+                                    }
+                                </style>
+                                <h2 class="section-title" style="<?php echo esc_attr($style); ?>"><?php the_title(); ?></h2>
+                            <?php 
+                            else: ?>
+                                <h2 class="section-title">
+                            <?php endif; ?>
                             <?php echo the_title(); // This displays the product title ?>
                             </h2>
                             <p>     <?php

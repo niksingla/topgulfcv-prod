@@ -9,12 +9,31 @@ get_header();
     <section class="content-section">
         <div class="container c-container">
             
-                <div class="row align-items-center">
+                <div class="row align-items-center free-services-archive-banner">
                     <div class="col-lg-6 col-md-6 col-12">
                         <div class="banner-left-sec" data-aos="fade-right">
-                            <h2 class="section-title">
-                                <?php the_field('free_services_heading'); ?>
-                            </h2>
+                            <?php 
+                            $set = get_field('free_services_heading_set');
+                            if ($set && $set['free_services_heading']) : 
+                                $style = '';
+                                if (!empty($set['font_color'])) $style .= "color:{$set['font_color']} !important;";
+                                if (!empty($set['span_font_color'])) {
+                                    echo "<style>
+                                            .free-services-archive-banner .section-title span {
+                                                color: {$set['span_font_color']} !important;
+                                            }
+                                        </style>";
+                                }
+                                ?>
+                                <style>
+                                    @media screen and (min-width: 1400px){
+                                        .free-services-archive-banner .section-title{
+                                            <?php if (!empty($set['font_size'])) echo "font-size:{$set['font_size']}px!important ;"; ?>
+                                        }
+                                    }
+                                </style>
+                                <h2 class="section-title" style="<?php echo esc_attr($style); ?>"><?php echo $set['free_services_heading']; ?></h2>
+                            <?php endif; ?>
                             <p><?php the_field('free_services_para'); ?></p>
                         </div>
                     </div>
@@ -84,83 +103,6 @@ get_header();
             </div>
     </section>
 
-    <!-- <section class="blog">
-        <div class="container c-container">
-            <h3 class="section-title text-center mb-5">
-                Our Latest <span class="d-inline"> Blog</span>
-            </h3>
-            <div class="blog-inner">
-                <div class="row justify-content-center">
-                    <div class="col-lg-4 col-md-6 col-12">
-                        <div class="blog-box">
-                            <a href="#">
-                                <div class="blog-img position-relative">
-                                    <img src="images/blog-img-1.png" alt="blog-img" class="img-fluid">
-                                    <span class="blog-date"> 16th oct 2023</span>
-                                </div>
-                                <div class="blog-text">
-                                    <h5>New Generation</h5>
-                                    <p class="mt-2 ">Lorem ipsum dolor sit amet, consectetur adipiscing elit. sed do
-                                        eiusmodLorem
-                                        ipsum
-                                        dolor sir amet, consectetur adipiscing elit, sed do eiusm</p>
-                                    <a href="#" class="readmore">Read More</a>
-                                    <div class="d-flex justify-content-end blog-shape">
-                                        <a href="#"><img src="images/blog-arrow.png" alt="arrow"
-                                                class="img-fluid position-relative"></a>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-12">
-                        <div class="blog-box">
-                            <a href="#">
-                                <div class="blog-img position-relative">
-                                    <img src="images/blog-img-2.png" alt="blog-img" class="img-fluid">
-                                    <span class="blog-date"> 16th oct 2023</span>
-                                </div>
-                                <div class="blog-text">
-                                    <h5>Most Important</h5>
-                                    <p class="mt-2 ">Lorem ipsum dolor sit amet, consectetur adipiscing elit. sed do
-                                        eiusmodLorem
-                                        ipsum
-                                        dolor sir amet, consectetur adipiscing elit, sed do eiusm</p>
-                                    <a href="#" class="readmore">Read More</a>
-                                    <div class="d-flex justify-content-end blog-shape">
-                                        <a href="#"><img src="images/blog-arrow.png" alt="arrow"
-                                                class="img-fluid position-relative"></a>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-12">
-                        <div class="blog-box">
-                            <a href="#">
-                                <div class="blog-img position-relative">
-                                    <img src="images/blog-img-3.png" alt="blog-img" class="img-fluid">
-                                    <span class="blog-date"> 16th oct 2023</span>
-                                </div>
-                                <div class="blog-text">
-                                    <h5>New days Insipiration</h5>
-                                    <p class="mt-2 ">Lorem ipsum dolor sit amet, consectetur adipiscing elit. sed do
-                                        eiusmodLorem
-                                        ipsum
-                                        dolor sir amet, consectetur adipiscing elit, sed do eiusm</p>
-                                    <a href="#" class="readmore">Read More</a>
-                                    <div class="d-flex justify-content-end blog-shape">
-                                        <a href="#"><img src="images/blog-arrow.png" alt="arrow"
-                                                class="img-fluid position-relative"></a>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
 </main><!-- #main -->
 
 <?php

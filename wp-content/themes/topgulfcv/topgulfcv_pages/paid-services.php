@@ -13,12 +13,31 @@ get_header();
     <section class="content-section">
         <div class="container c-container">
 
-            <div class="row align-items-center">
+            <div class="row align-items-center paid-services-archive-banner">
                 <div class="col-lg-6 col-md-6 col-12">
                     <div class="banner-left-sec" data-aos="fade-right">
-                        <h2 class="section-title">
-                            <?php the_field('banner_heading'); ?>
-                        </h2>
+                        <?php 
+                        $set = get_field('banner_heading_set');
+                        if ($set && $set['banner_heading']) : 
+                            $style = '';
+                            if (!empty($set['font_color'])) $style .= "color:{$set['font_color']} !important;";
+                            if (!empty($set['span_font_color'])) {
+                                echo "<style>
+                                        .paid-services-archive-banner .section-title span {
+                                            color: {$set['span_font_color']} !important;
+                                        }
+                                    </style>";
+                            }
+                            ?>
+                            <style>
+                                @media screen and (min-width: 1400px){
+                                    .paid-services-archive-banner .section-title{
+                                        <?php if (!empty($set['font_size'])) echo "font-size:{$set['font_size']}px!important ;"; ?>
+                                    }
+                                }
+                            </style>
+                            <h2 class="section-title" style="<?php echo esc_attr($style); ?>"><?php echo $set['banner_heading']; ?></h2>
+                        <?php endif; ?>                        
                         <p><?php the_field('banner_paragraph'); ?></span> </p>
                     </div>
                 </div>
@@ -32,18 +51,7 @@ get_header();
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- <div class="row">
-                    <div class="col-lg-6">
-                        <div class="item" data-aos="fade-down">fade-down</div>
-                        <div class="item" data-aos="fade-right">fade-right</div>
-
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="item" data-aos="fade-left">fade-left</div>
-                    </div>
-                </div> -->
-
+            </div>            
         </div>
     </section>
     <!-- banner section end -->

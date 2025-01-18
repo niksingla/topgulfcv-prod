@@ -10,9 +10,22 @@ get_header();
         <div class="header_mail">
             <div class="sub-banner cont-banner"style="background-image: url(<?php the_field('banner_image'); ?>);">
             <div class="container" data-aos="fade-down">
-                <div class="sub-banner-content">
-                    <h1 class="section-title"><?php the_field('heading'); ?></h1>
-                    </p>
+                <div class="sub-banner-content faq-banner">
+                    <?php 
+                    $set = get_field('heading_set');
+                    if ($set && $set['heading']) : 
+                        $style = '';
+                        if (!empty($set['font_color'])) $style .= "color:{$set['font_color']} !important;";
+                        ?>
+                        <style>
+                            @media screen and (min-width: 1400px){
+                                .faq-banner .section-title{
+                                    <?php if (!empty($set['font_size'])) echo "font-size:{$set['font_size']}px!important ;"; ?>
+                                }
+                            }
+                        </style>
+                        <h1 class="section-title" style="<?php echo esc_attr($style); ?>"><?php echo esc_html($set['heading']); ?></h1>
+                    <?php endif; ?>
                 </div>
             </div>
             </div>

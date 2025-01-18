@@ -27,9 +27,21 @@ get_header();
 <section class="about-sec">
     <div class="container c-container" data-aos="fade-down">
         <div class="trusted-by">
-            <h3 class="section-sub-title text-center mb-2">
-                <?php the_field('our_clients_heading_testimonials', 1901); ?>
-            </h3>
+            <?php 
+            $set = get_field('our_clients_heading_set',1901);
+            if ($set && $set['our_clients_heading']) : 
+                $style = '';
+                if (!empty($set['font_color'])) $style .= "color:{$set['font_color']} !important;";
+                ?>
+                <style>
+                    @media screen and (min-width: 1400px){
+                        .trusted-by .section-sub-title{
+                            <?php if (!empty($set['font_size'])) echo "font-size:{$set['font_size']}px!important ;"; ?>
+                        }
+                    }
+                </style>
+                <h3 class="section-sub-title text-center mb-2" style="<?php echo esc_attr($style); ?>"><?php echo esc_html($set['our_clients_heading']); ?></h3>
+            <?php endif; ?>
             <div class="owl-carousel owl-theme logo-pannel owlcrousel_one">
                 <?php if (have_rows('our_clients_logo_testimonials', 1901)):
                     while (have_rows('our_clients_logo_testimonials', 1901)):
@@ -49,7 +61,21 @@ get_header();
 <section class="success_list">
     <div class="container c-container testi_contenar">
         <div class="col-lg-8 col-12">
-            <h3 class="section-sub-title text-center mb-4">  <?php the_field('testimonials_heading', 1901); ?></h3>
+            <?php 
+            $set = get_field('testimonials_heading_set',1901);
+            if ($set && $set['testimonials_heading']) : 
+                $style = '';
+                if (!empty($set['font_color'])) $style .= "color:{$set['font_color']} !important;";
+                ?>
+                <style>
+                    @media screen and (min-width: 1400px){
+                        .testi_contenar .section-sub-title{
+                            <?php if (!empty($set['font_size'])) echo "font-size:{$set['font_size']}px!important ;"; ?>
+                        }
+                    }
+                </style>
+                <h3 class="section-sub-title text-center mb-4" style="<?php echo esc_attr($style); ?>"><?php echo esc_html($set['testimonials_heading']); ?></h3>
+            <?php endif; ?>            
             <div class="testimonial-container quote green" data-aos="fade-down">
                 <!-- Container for loaded testimonials -->
                 <div class="loaded-testimonials">

@@ -25,7 +25,28 @@ get_header();
             </video>
         </div>
         <div class="banner-inner">
-
+        <?php 
+        $set = get_field('heading_set');
+        if ($set) : 
+            $style = '';
+            if (!empty($set['font_size'])) $style .= "font-size:{$set['font_size']}px !important;";
+            if (!empty($set['font_color'])) $style .= "color:{$set['font_color']} !important;";
+            if (!empty($set['font_color_span'])) $style .= "color:{$set['font_color_span']} !important;";
+            ?>
+            <style>
+                @media screen and (min-width: 1400px){
+                    .banner-inner .slider_content h1{
+                        <?php if (!empty($set['font_size'])) echo "font-size:{$set['font_size']}px ;"; ?>
+                    }
+                }
+                .banner-inner .slider_content h1{
+                    <?php if (!empty($set['font_color'])) echo "color:{$set['font_color']} !important;";?>                    
+                }
+                .banner-inner .slider_content h1 span{
+                    <?php if (!empty($set['font_color_span'])) echo "color:{$set['font_color_span']} !important;"; ?>
+                }
+            </style>            
+        <?php endif; ?>
             <div class="owl-carousel owl-theme banner-slider owlcrousel_two">
                 <?php
                 $paged = get_query_var('paged') ? get_query_var('paged') : 1; // setup pagination
