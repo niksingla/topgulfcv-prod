@@ -29,10 +29,11 @@ get_header();
                             <?php 
                             else: ?>
                                 <h2 class="section-title">
+                                    <?php the_title(); // This displays the product title ?>
+                                </h2>
                             <?php endif; ?>
-                            <?php echo the_title(); // This displays the product title ?>
-                            </h2>
-                            <p>     <?php
+                            <p>     
+                                <?php
                         global $product;
                         echo $product->get_description(); // This displays the product description
                         ?></span> </p>
