@@ -257,7 +257,7 @@
 <script type="text/javascript">
     jQuery(window).on('load', function () {
         const $video = $('.lazy-video');
-        setTimeout(() => {               
+        setTimeout(() => {                           
             $video.attr('src',$video.find('source').data('src'))
             $video.fadeIn(); 
             for (let index = 0; index < $video.length; index++) {
@@ -266,6 +266,21 @@
             }
         }, 0);
     });
+    document.addEventListener("DOMContentLoaded", function () {
+        const video = document.querySelector(".lazy-video-home");
+        const videoUrl = video.dataset.src;
+        if(videoUrl){
+            fetch(videoUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const localUrl = URL.createObjectURL(blob);
+                    video.src = localUrl;
+                    video.load();
+                })
+                .catch(error => console.error("Error loading video:", error));
+        }
+    });
+    
 </script>
 
 <?php 

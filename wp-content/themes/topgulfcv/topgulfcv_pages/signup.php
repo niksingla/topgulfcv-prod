@@ -170,7 +170,7 @@ get_header();
                         <?php } ?>
                     <?php else:  ?>
                         <h2>No services added to the cart.</h2>
-                        <a href="/paid-services/" class="red-btn my-2 my-sm-4">Continue Shopping</a>
+                        <a href="/resources/" class="red-btn my-2 my-sm-4">Continue Shopping</a>
 
                     <?php endif; ?>
 

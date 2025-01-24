@@ -1,7 +1,7 @@
 <?php
 /* Template Name: Free Services */ 
 get_header();
-
+$free_services_page = get_option('free_services_archive_page', 139);
 ?>
 
 <main id="primary" class="site-main">
@@ -13,7 +13,7 @@ get_header();
                     <div class="col-lg-6 col-md-6 col-12">
                         <div class="banner-left-sec" data-aos="fade-right">
                             <?php 
-                            $set = get_field('free_services_heading_set');
+                            $set = get_field('free_services_heading_set', $free_services_page);
                             if ($set && $set['free_services_heading']) : 
                                 $style = '';
                                 if (!empty($set['font_color'])) $style .= "color:{$set['font_color']} !important;";
@@ -34,7 +34,7 @@ get_header();
                                 </style>
                                 <h2 class="section-title" style="<?php echo esc_attr($style); ?>"><?php echo $set['free_services_heading']; ?></h2>
                             <?php endif; ?>
-                            <p><?php the_field('free_services_para'); ?></p>
+                            <p><?php the_field('free_services_para', $free_services_page); ?></p>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-12">
@@ -42,7 +42,7 @@ get_header();
                             <!-- <img src="<?php echo get_template_directory_uri(); ?>/images/about-img-1.png" alt="about-img" class="img-fluid"> -->
                             <div class="ratio ratio-16x9">
                                 <video playsinline autoplay muted loop preload="none" style="display:none;" class="lazy-video">
-                                    <source data-src="<?php the_field('free_services_video', 139); ?>" type="video/mp4">
+                                    <source data-src="<?php the_field('free_services_video', $free_services_page); ?>" type="video/mp4">
                                 </video>   
                             </div>
 
@@ -57,7 +57,7 @@ get_header();
         <div class="container c-container">
         <div class="job-section pb-0">
                 <h2 class="section-title text-center">
-                <?php echo the_field('free_services_heading', 5); ?>
+                <?php echo the_field('free_services_heading', get_option('page_on_front')); ?>
                 </h2>
                 <div class="row justify-content-center">
                 <?php
@@ -87,7 +87,7 @@ get_header();
                                     <?php echo esc_html($excerpt); ?>
                                 </p>
                                 <div class="d-flex justify-content-center readm">
-                                    <a href="<?php the_permalink(); ?>" class="my-2 blue"><?php echo the_field('free_services_read_more', 5); ?></a>
+                                    <a href="<?php the_permalink(); ?>" class="my-2 blue"><?php echo the_field('free_services_read_more', get_option('page_on_front')); ?></a>
                                 </div>
 
                                 <div class="d-flex justify-content-center readm">

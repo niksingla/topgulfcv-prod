@@ -20,8 +20,11 @@ get_header();
     <!-- about us sec  start-->
     <section class="banner-sec">
         <div class="video-container">
-            <video playsinline autoplay muted loop preload="none" style="display:none;" class="lazy-video">
-                <source data-src="<?php the_field('home_banner_video') ?>" type="video/mp4">
+            <link rel="preload" href="<?php the_field('banner_poster'); ?>" as="image" fetchpriority="high">
+            <video playsinline autoplay muted loop preload="none"                                 
+                poster="<?php the_field('banner_poster'); ?>"
+                class="lazy-video-home"
+                data-src="<?php the_field('home_banner_video') ?>" >                
             </video>
         </div>
         <div class="banner-inner">
@@ -458,10 +461,8 @@ get_header();
                     <?php echo the_field('ready_to_make_para',5); ?>
                 </p>
                 <div class="d-flex justify-content-center readm">
-                    <a href="<?php echo the_field('free_services_url',5); ?>" class="red-btn my-2 my-sm-4">Free Services
-                    </a>
-                    <a href="<?php echo the_field('paid_services_url',5); ?>" class="red-btn my-2 my-sm-4 bg-black">Paid
-                        Services</a>
+                    <a href="<?php echo the_field('free_services_url',5); ?>" class="red-btn my-2 my-sm-4"><?php the_field('button_text');?></a>
+                    <a href="<?php echo the_field('paid_services_url',5); ?>" class="red-btn my-2 my-sm-4 bg-black"><?php the_field('second_button_text'); ?></a>
                 </div>
                 <p>
                     <?php echo the_field('ready_to_make_2nd_para'); ?>
