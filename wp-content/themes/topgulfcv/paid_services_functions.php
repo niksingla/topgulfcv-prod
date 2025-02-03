@@ -122,15 +122,16 @@ function enqueue_pdfhtml_scripts()
 add_action('admin_enqueue_scripts', 'enqueue_pdfhtml_scripts');
 
 
-function add_custom_row_classes($classes, $class, $post_id) {
+function add_custom_row_classes($classes, $class, $post_id)
+{
     if ('paid_services' == get_post_type($post_id)) {
-        $order_id = $post_id ? get_post_meta( $post_id, 'order_number', true ) : '-';
+        $order_id = $post_id ? get_post_meta($post_id, 'order_number', true) : '-';
 
         if ($order_id) {
             $order = wc_get_order($order_id);
-        
+
             $status = $order->get_status();
-            if(in_array($status,['processing','completed'])){
+            if (in_array($status, ['processing', 'completed'])) {
                 $product_name = true;
             }
             // if ($order) {
@@ -138,16 +139,17 @@ function add_custom_row_classes($classes, $class, $post_id) {
             //         $product_name = $item->get_name();
             //     }
             // } 
-        }         
+        }
         if (!$product_name) {
             $classes[] = 'no-payment-method';
         }
-    }    
+    }
     return $classes;
 }
 add_filter('post_class', 'add_custom_row_classes', 10, 3);
 
-function hide_no_payment_method_rows() {
+function hide_no_payment_method_rows()
+{
     echo '<style>
         .no-payment-method {
             display: none;
@@ -158,17 +160,17 @@ add_action('admin_head', 'hide_no_payment_method_rows');
 
 
 function custom_columns_content($column_name, $post_id)
-{    
+{
     $email = get_post_meta($post_id, "email", true);
     $user = get_user_by('email', $email);
     // $payment_method = $user ? get_user_meta($user->ID, '_payment_method', true) : false;
-    $order_number = get_post_meta( $post_id, 'order_number', true );
-    if($order_number){
-        $order_payment_method = get_post_meta( $order_number, '_payment_method_title', true );
+    $order_number = get_post_meta($post_id, 'order_number', true);
+    if ($order_number) {
+        $order_payment_method = get_post_meta($order_number, '_payment_method_title', true);
     } else {
-        $order_payment_method = get_post_meta( $post_id+1, '_payment_method_title', true );
+        $order_payment_method = get_post_meta($post_id + 1, '_payment_method_title', true);
     }
-    $payment_method = $order_payment_method ? $order_payment_method : false;    
+    $payment_method = $order_payment_method ? $order_payment_method : false;
     if ($column_name == "payment-method") {
         if ($payment_method) {
             echo $payment_method;
@@ -204,28 +206,28 @@ function custom_columns_content($column_name, $post_id)
         // } else {
         //     echo '-';
         // }
-  
+
 
     }
-   
+
     if ($column_name == "service1") {
         $selected_services = get_post_meta($post_id, "selected_services", true);
-        if($selected_services){        
+        if ($selected_services) {
             echo $selected_services;
         } else {
             // $echo = $selected_services;
-            $order_id = $post_id ? $post_id+1 : '-';
-    
+            $order_id = $post_id ? $post_id + 1 : '-';
+
             if ($order_id) {
                 $order = wc_get_order($order_id);
-            
+
                 if ($order) {
                     foreach ($order->get_items() as $item_id => $item) {
                         $product_name = $item->get_name();
                         echo $product_name . ',';
                     }
-                } 
-            } 
+                }
+            }
         }
         $uploaded_resume = get_post_meta($post_id, "uploaded_resume", true);
         if ($uploaded_resume) {
@@ -235,13 +237,14 @@ function custom_columns_content($column_name, $post_id)
     if ($column_name == "date1") {
         echo get_the_date("", $post_id) . " at " . get_the_time("", $post_id);
     }
-    if ($column_name == "sendreport" && strpos($selected_services, "CV/Resume Analysis") !== false) {
+    $uploaded_resume = get_post_meta($post_id, "uploaded_resume", true);
+    if ($column_name == "sendreport" && !empty($uploaded_resume)) {
         $edit_page_url = admin_url('post.php?post=' . $post_id . '&action=edit');
         $send_report_url = $edit_page_url . '&send_email=true';
         $username = get_post_meta($post_id, 'cv_report_name', true);
         $image_resume = get_post_meta($post_id, "cv_report_image", true);
         // $logo_path = 'https://topgulfcv.com/wp-content/uploads/2024/03/topgulf.png';
-      
+
         // $logo_data_url = 'data:image/png;base64,' . base64_encode(file_get_contents($logo_path));
         $image1_path = get_option('image1');
         $logo_path = get_option('header_logo');
@@ -251,194 +254,329 @@ function custom_columns_content($column_name, $post_id)
         $image2_path = get_option('image2');
         // $image2_data_url = 'data:image/png;base64,' . base64_encode(file_get_contents($image2_path));
         $image2_link = get_option('image2_link');
-        ?>
+?>
 
-        
-    <script>
 
-        function getBase64Image(img) {
-            var canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            var dataURL = canvas.toDataURL("image/png");
-            return dataURL.replace(/^data:image\/?[A-z]*;base64,/);
-        }
-        function imageToBase64(url, callback) {
-            // Create a new image element
-            let img = new Image();
-            // Set crossOrigin to Anonymous to avoid CORS issues
-            img.crossOrigin = 'Anonymous';
-            
-            // Once the image has loaded
-            img.onload = function() {
-                // Create a canvas element
-                let canvas = document.createElement('canvas');
-                // Set canvas dimensions to the image dimensions
+        <script>
+            function getBase64Image(img) {
+                var canvas = document.createElement("canvas");
                 canvas.width = img.width;
                 canvas.height = img.height;
-
-                // Draw the image on the canvas
-                let ctx = canvas.getContext('2d');
+                var ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0);
-
-                // Get the data URL of the image in base64 format
-                let dataURL = canvas.toDataURL('image/png');
-                console.log(dataURL);    
-                // Remove the "data:image/png;base64," part to get the raw base64 string
-                let base64String = dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
-                console.log(base64String);    
-                
-                // Call the callback function with the base64 string
-                callback(base64String);
-            };
-
-            // Set the image source to start loading
-            img.src = url;
-        }
-
-        function imageToBase64zz(url, callback) {
-            fetch(url)
-            .then((response) => response.blob())
-            .then((blob) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = () => {
-                    const base64String = reader.result;
-                    callback(base64String);
-                };
-            });
-        }
-        function getDataUri(url)
-        {
-            return new Promise(resolve => {
-                var image = new Image();
-                image.setAttribute('crossOrigin', 'anonymous'); //getting images from external domain
-
-                image.onload = function () {
-                    var canvas = document.createElement('canvas');
-                    canvas.width = this.naturalWidth;
-                    canvas.height = this.naturalHeight; 
-
-                    //next three lines for white background in case png has a transparent background
-                    var ctx = canvas.getContext('2d');
-                    ctx.fillStyle = '#fff';  /// set white fill style
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                    canvas.getContext('2d').drawImage(this, 0, 0);
-
-                    resolve(canvas.toDataURL('image/png'));
-                };
-
-                image.src = url;
-            })
-        }
-        // var base64 = getBase64Image(document.getElementById("imageid"));
-
-        async function downloadPdf_<?php echo $post_id; ?>(username) {
-            let logo = await getDataUri('<?php echo $logo_path; ?>'); 
-            let img = await getDataUri('<?php echo $image1_path; ?>');        
-            let img2 = await getDataUri('<?php echo $image2_path; ?>');  
-            var docDefinition = {
-                                    styles: {
-                                        customClass1: {
-                                            'border-radius': '10px' // Use quotes around the property name
-                                        }
-                                    }
-                                };
-            var content = [
-                {
-                    image:logo,
-                    width: 150,
-                    alignment: "center",
-                    margin: [0, 0, 0, 10]
-                },
-                { text: { bold: true, text: "Name: " + username }, alignment: "center", margin: [0, 0, 0, 10] },
-                <?php if ($image_resume) {
-                    $image_data_url = 'data:image/png;base64,' . base64_encode(file_get_contents($image_resume));
-                    echo '{ image: \'' . $image_data_url . '\', width: 100, margin: [0, 10, 0, 10] },';
-                } ?>
-                { text: { bold: true, text: "Introduction:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65ba0615b424a', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Summary:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65ba0eb9a48c9', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Profile Summary:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65cb011b6a30f', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Current:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65cb01546a311', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Past:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65cb013a6a310', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Education:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65cb01676a312', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Picture, Images Logos & Icons:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65bb6a90ae963', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Layout, Design, Structure & Format:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65bb7dd48e573', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Content, Length & Size:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65bb7f816f3e3', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Spelling & Grammar:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65bb7fb46f3e4', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Font, Consistency & Chronology:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65bb7fd16f3e5', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Keywords:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65bb7ff26f3e6', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Keyword & Value: " }, margin: [0, 10, 0, 5], style: "subfield" },
-                <?php if (have_rows('field_65c9c3f8e9486', $post_id)) {
-                    while (have_rows('field_65c9c3f8e9486', $post_id)) {
-                        the_row();
-                        $sub_field1 = get_sub_field('keyword11');
-                        $sub_field2 = get_sub_field('value');
-                        echo '{ text: \'' . esc_js($sub_field1) . '   ' . esc_js($sub_field2) . '\', margin: [0, 0, 0, 10], style: "subfield" },';
-                    }
-                } ?>
-                { text: { bold: true, text: "Bullets & Detail:" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65bb80106f3e7', $post_id)); ?>', margin: [0, 0, 0, 10] },
-                { text: { bold: true, text: "Conclusion (Recommendation & Next Steps):" }, margin: [0, 10, 0, 5] },
-                { text: '<?php echo esc_js(get_field('field_65bb80326f3e8', $post_id)); ?>', margin: [0, 0, 0, 10] },      
-                {
-                columns: [
-                    {
-                        stack: [
-                            {
-                                image: img,
-                                width: 220,
-                                link: '<?php echo $image1_link; ?>',
-                                margin: [15, 15, 15, 15], 
-                                style: 'customClass1'
-                            }
-                        ]
-                    },
-                    {
-                        stack: [
-                            {
-                                image: img2,
-                                width: 220,
-                                link: '<?php echo $image2_link; ?>',
-                                margin: [15, 15, 15, 15],
-                                style: 'customClass1' 
-                            }
-                        ]
-                    }
-
-                ]
+                var dataURL = canvas.toDataURL("image/png");
+                return dataURL.replace(/^data:image\/?[A-z]*;base64,/);
             }
 
+            function imageToBase64(url, callback) {
+                // Create a new image element
+                let img = new Image();
+                // Set crossOrigin to Anonymous to avoid CORS issues
+                img.crossOrigin = 'Anonymous';
 
-            ];
+                // Once the image has loaded
+                img.onload = function() {
+                    // Create a canvas element
+                    let canvas = document.createElement('canvas');
+                    // Set canvas dimensions to the image dimensions
+                    canvas.width = img.width;
+                    canvas.height = img.height;
 
-            var docDefinition = {
-                content: content,
-                styles: {
-                    header: { fontSize: 18, bold: true }
-                }
-            };
+                    // Draw the image on the canvas
+                    let ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
 
-            pdfMake.createPdf(docDefinition).download(username + "_report.pdf");
-        }
-    </script>
+                    // Get the data URL of the image in base64 format
+                    let dataURL = canvas.toDataURL('image/png');
+                    console.log(dataURL);
+                    // Remove the "data:image/png;base64," part to get the raw base64 string
+                    let base64String = dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
+                    console.log(base64String);
 
-    <?php
+                    // Call the callback function with the base64 string
+                    callback(base64String);
+                };
+
+                // Set the image source to start loading
+                img.src = url;
+            }
+
+            function imageToBase64zz(url, callback) {
+                fetch(url)
+                    .then((response) => response.blob())
+                    .then((blob) => {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(blob);
+                        reader.onloadend = () => {
+                            const base64String = reader.result;
+                            callback(base64String);
+                        };
+                    });
+            }
+
+            function getDataUri(url) {
+                return new Promise(resolve => {
+                    var image = new Image();
+                    image.setAttribute('crossOrigin', 'anonymous'); //getting images from external domain
+
+                    image.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        canvas.width = this.naturalWidth;
+                        canvas.height = this.naturalHeight;
+
+                        //next three lines for white background in case png has a transparent background
+                        var ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#fff'; /// set white fill style
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        canvas.getContext('2d').drawImage(this, 0, 0);
+
+                        resolve(canvas.toDataURL('image/png'));
+                    };
+
+                    image.src = url;
+                })
+            }
+            // var base64 = getBase64Image(document.getElementById("imageid"));
+
+            async function downloadPdf_<?php echo $post_id; ?>(username) {
+                let logo = await getDataUri('<?php echo $logo_path; ?>');
+                let img = await getDataUri('<?php echo $image1_path; ?>');
+                let img2 = await getDataUri('<?php echo $image2_path; ?>');
+                var docDefinition = {
+                    styles: {
+                        customClass1: {
+                            'border-radius': '10px' // Use quotes around the property name
+                        }
+                    }
+                };
+                var content = [{
+                        image: logo,
+                        width: 150,
+                        alignment: "center",
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Name: " + username
+                        },
+                        alignment: "center",
+                        margin: [0, 0, 0, 10]
+                    },
+                    <?php if ($image_resume) {
+                        $image_data_url = 'data:image/png;base64,' . base64_encode(file_get_contents($image_resume));
+                        echo '{ image: \'' . $image_data_url . '\', width: 100, margin: [0, 10, 0, 10] },';
+                    } ?> {
+                        text: {
+                            bold: true,
+                            text: "Introduction:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65ba0615b424a', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Summary:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65ba0eb9a48c9', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Profile Summary:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65cb011b6a30f', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Current:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65cb01546a311', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Past:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65cb013a6a310', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Education:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65cb01676a312', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Picture, Images Logos & Icons:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65bb6a90ae963', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Layout, Design, Structure & Format:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65bb7dd48e573', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Content, Length & Size:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65bb7f816f3e3', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Spelling & Grammar:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65bb7fb46f3e4', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Font, Consistency & Chronology:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65bb7fd16f3e5', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Keywords:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65bb7ff26f3e6', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Keyword & Value: "
+                        },
+                        margin: [0, 10, 0, 5],
+                        style: "subfield"
+                    },
+                    <?php if (have_rows('field_65c9c3f8e9486', $post_id)) {
+                        while (have_rows('field_65c9c3f8e9486', $post_id)) {
+                            the_row();
+                            $sub_field1 = get_sub_field('keyword11');
+                            $sub_field2 = get_sub_field('value');
+                            echo '{ text: \'' . esc_js($sub_field1) . '   ' . esc_js($sub_field2) . '\', margin: [0, 0, 0, 10], style: "subfield" },';
+                        }
+                    } ?> {
+                        text: {
+                            bold: true,
+                            text: "Bullets & Detail:"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65bb80106f3e7', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        text: {
+                            bold: true,
+                            text: "Conclusion (Recommendation & Next Steps):"
+                        },
+                        margin: [0, 10, 0, 5]
+                    },
+                    {
+                        text: '<?php echo esc_js(get_field('field_65bb80326f3e8', $post_id)); ?>',
+                        margin: [0, 0, 0, 10]
+                    },
+                    {
+                        columns: [{
+                                stack: [{
+                                    image: img,
+                                    width: 220,
+                                    link: '<?php echo $image1_link; ?>',
+                                    margin: [15, 15, 15, 15],
+                                    style: 'customClass1'
+                                }]
+                            },
+                            {
+                                stack: [{
+                                    image: img2,
+                                    width: 220,
+                                    link: '<?php echo $image2_link; ?>',
+                                    margin: [15, 15, 15, 15],
+                                    style: 'customClass1'
+                                }]
+                            }
+
+                        ]
+                    }
+
+
+                ];
+
+                var docDefinition = {
+                    content: content,
+                    styles: {
+                        header: {
+                            fontSize: 18,
+                            bold: true
+                        }
+                    }
+                };
+
+                pdfMake.createPdf(docDefinition).download(username + "_report.pdf");
+            }
+        </script>
+
+        <?php
         $status_update = get_post_meta($post_id, 'status-update', true);
         $status_done = get_post_meta($post_id, 'status-done', true);
         $button_text = ($status_update === 'In Review' || $status_update === 'Done') ? 'View Report' : 'Create Report';
@@ -500,14 +638,14 @@ function custom_columns_content($column_name, $post_id)
                 color: #fff;
             }
             </style>';
-                ?>
-<script>
-function closeExtendForm() {
-    jQuery('.extendLinkForm').hide();
-}
-</script>
-<?php
-}
+        ?>
+                <script>
+                    function closeExtendForm() {
+                        jQuery('.extendLinkForm').hide();
+                    }
+                </script>
+        <?php
+            }
         }
         echo $export_pdf_script;
     }
@@ -564,8 +702,6 @@ function closeExtendForm() {
         }
         echo '</select>';
     }
-
-
 }
 add_action("manage_paid_services_posts_custom_column", "custom_columns_content", 10, 2);
 
@@ -632,39 +768,39 @@ function custom_post_type_filter()
         echo '<div class="alignright">
         <a href="#" id="export-button" class="button">Export</a> </div>';
         ?>
-<script>
-jQuery(document).ready(function($) {
-    $('#export-button').on('click', function(e) {
-        e.preventDefault();
-        var selectedService = $('[name="services"]').val();
-        var urlParams = new URLSearchParams(window.location.search);
-        var filterParam = urlParams.get('services');
-        if (selectedService !== "") {
-            console.log('Exporting filtered posts...');
-            var exportUrl =
-            '<?php echo admin_url('admin-ajax.php?action=export_paid_services_csv'); ?>';
-            exportUrl += '&services=' + encodeURIComponent(selectedService);
-            window.location.href = exportUrl;
-        } else if (filterParam !== null) {
-            console.log('Exporting filtered posts (from URL)...');
-            var exportUrl =
-            '<?php echo admin_url('admin-ajax.php?action=export_paid_services_csv'); ?>';
-            exportUrl += '&services=' + encodeURIComponent(filterParam);
-            window.location.href = exportUrl;
-        } else {
-            window.location.href =
-                '<?php echo admin_url('admin-ajax.php?action=export_paid_services_csv'); ?>';
-        }
-    });
-});
-</script>
+        <script>
+            jQuery(document).ready(function($) {
+                $('#export-button').on('click', function(e) {
+                    e.preventDefault();
+                    var selectedService = $('[name="services"]').val();
+                    var urlParams = new URLSearchParams(window.location.search);
+                    var filterParam = urlParams.get('services');
+                    if (selectedService !== "") {
+                        console.log('Exporting filtered posts...');
+                        var exportUrl =
+                            '<?php echo admin_url('admin-ajax.php?action=export_paid_services_csv'); ?>';
+                        exportUrl += '&services=' + encodeURIComponent(selectedService);
+                        window.location.href = exportUrl;
+                    } else if (filterParam !== null) {
+                        console.log('Exporting filtered posts (from URL)...');
+                        var exportUrl =
+                            '<?php echo admin_url('admin-ajax.php?action=export_paid_services_csv'); ?>';
+                        exportUrl += '&services=' + encodeURIComponent(filterParam);
+                        window.location.href = exportUrl;
+                    } else {
+                        window.location.href =
+                            '<?php echo admin_url('admin-ajax.php?action=export_paid_services_csv'); ?>';
+                    }
+                });
+            });
+        </script>
 
 
 
 
 
-<?php
-}
+    <?php
+    }
 }
 
 add_action('restrict_manage_posts', 'custom_post_type_filter');
@@ -847,84 +983,84 @@ function render_custom_image_meta_box()
     $custom_image = get_post_meta($post_id, 'cv_report_image', true);
     ?>
 
-<p id="custom-image-preview">
-    <?php if (!empty($custom_image)): ?>
-    <img src="<?php echo esc_url($custom_image); ?>" alt="Profile Image" style="max-width: 100%; height: auto;">
-    <?php else: ?>
-    <em>No profile image found</em>
-    <?php endif;?>
-</p>
-<p>
-    <label for="upload-button">Upload Image:</label>
-    <input type="button" id="upload-button" class="button" value="Select Image">
-    <input type="hidden" id="cv_report_image_manually_selected" name="cv_report_image_manually_selected" value="">
-    <input type="hidden" id="cv_report_image" name="cv_report_image" value="<?php echo esc_attr($custom_image); ?>">
-</p>
-<p>
-    <label for="remove-image-button">Remove Image:</label>
-    <input type="button" id="remove-image-button" class="button" value="Remove Image">
-</p>
+    <p id="custom-image-preview">
+        <?php if (!empty($custom_image)): ?>
+            <img src="<?php echo esc_url($custom_image); ?>" alt="Profile Image" style="max-width: 100%; height: auto;">
+        <?php else: ?>
+            <em>No profile image found</em>
+        <?php endif; ?>
+    </p>
+    <p>
+        <label for="upload-button">Upload Image:</label>
+        <input type="button" id="upload-button" class="button" value="Select Image">
+        <input type="hidden" id="cv_report_image_manually_selected" name="cv_report_image_manually_selected" value="">
+        <input type="hidden" id="cv_report_image" name="cv_report_image" value="<?php echo esc_attr($custom_image); ?>">
+    </p>
+    <p>
+        <label for="remove-image-button">Remove Image:</label>
+        <input type="button" id="remove-image-button" class="button" value="Remove Image">
+    </p>
 
-<script>
-jQuery(document).ready(function($) {
-    var mediaUploader;
+    <script>
+        jQuery(document).ready(function($) {
+            var mediaUploader;
 
-    $('#upload-button').click(function(e) {
-        e.preventDefault();
-        if (mediaUploader) {
-            mediaUploader.open();
-            return;
-        }
-        mediaUploader = wp.media.frames.file_frame = wp.media({
-            title: 'Choose Image',
-            button: {
-                text: 'Choose Image'
-            },
-            multiple: false
-        });
-        mediaUploader.on('select', function() {
-            var attachment = mediaUploader.state().get('selection').first().toJSON();
-            var oldImageUrl = $('#cv_report_image').val();
-            $('#cv_report_image').val(attachment.url);
-            $('#custom-image-preview').html('<img src="' + attachment.url +
-                '" alt="Profile Image" style="max-width: 100%; height: auto;">');
-            if (oldImageUrl !== attachment.url) {
+            $('#upload-button').click(function(e) {
+                e.preventDefault();
+                if (mediaUploader) {
+                    mediaUploader.open();
+                    return;
+                }
+                mediaUploader = wp.media.frames.file_frame = wp.media({
+                    title: 'Choose Image',
+                    button: {
+                        text: 'Choose Image'
+                    },
+                    multiple: false
+                });
+                mediaUploader.on('select', function() {
+                    var attachment = mediaUploader.state().get('selection').first().toJSON();
+                    var oldImageUrl = $('#cv_report_image').val();
+                    $('#cv_report_image').val(attachment.url);
+                    $('#custom-image-preview').html('<img src="' + attachment.url +
+                        '" alt="Profile Image" style="max-width: 100%; height: auto;">');
+                    if (oldImageUrl !== attachment.url) {
 
+                        var data = {
+                            action: 'update_cv_report_image',
+                            post_id: $('#post_ID').val(),
+                            new_image_url: attachment.url,
+                        };
+
+                        $.post(ajaxurl, data, function(response) {
+                            console.log(response);
+                        });
+                    }
+                });
+                mediaUploader.open();
+            });
+
+            $('#remove-image-button').click(function(e) {
+                e.preventDefault();
+                $('#cv_report_image').val('');
+
+                $('#custom-image-preview').html('<em>No profile image found</em>');
+
+                // Update post meta to remove the image
                 var data = {
                     action: 'update_cv_report_image',
                     post_id: $('#post_ID').val(),
-                    new_image_url: attachment.url,
+                    new_image_url: '',
                 };
 
                 $.post(ajaxurl, data, function(response) {
                     console.log(response);
                 });
-            }
+            });
         });
-        mediaUploader.open();
-    });
+    </script>
 
-    $('#remove-image-button').click(function(e) {
-        e.preventDefault();
-        $('#cv_report_image').val('');
-
-        $('#custom-image-preview').html('<em>No profile image found</em>');
-
-        // Update post meta to remove the image
-        var data = {
-            action: 'update_cv_report_image',
-            post_id: $('#post_ID').val(),
-            new_image_url: '',
-        };
-
-        $.post(ajaxurl, data, function(response) {
-            console.log(response);
-        });
-    });
-});
-</script>
-
-<?php
+    <?php
 }
 
 function remove_cv_report_image()
@@ -944,7 +1080,7 @@ function update_cv_report_image()
     $current_image = get_post_meta($post_id, 'cv_report_image', true);
     update_post_meta($post_id, 'cv_report_image', $new_image_url);
     echo 'Image updated successfully';
- 
+
     wp_die();
 }
 
@@ -952,7 +1088,8 @@ add_action('wp_ajax_update_cv_report_image', 'update_cv_report_image');
 
 add_action('load-post.php', 'add_custom_button_to_edit_page');
 function add_custom_button_to_edit_page()
-{global $post, $pagenow;
+{
+    global $post, $pagenow;
 
     if ($pagenow == 'post.php' && $_GET['post']) {
         $post_type = get_post_type($_GET['post']);
@@ -1006,18 +1143,18 @@ function add_custom_button_to_edit_page()
             $uploaded_resume = get_post_meta($post_id, "uploaded_resume", true);
             if ($uploaded_resume && !get_post_meta($post_id, 'python_name', true) && !get_post_meta($post_id, 'python_image', true)) {
                 $status_update = get_post_meta($post_id, 'status-update', true);
-                
+
                 $resumefile = wp_upload_dir()['basedir'] . '/' . basename($uploaded_resume);
                 $resumeBase = basename($uploaded_resume);
-                
+
                 $python_script_path = __DIR__ . '/name.py';
-                
+
                 $command = "python3 $python_script_path $resumeBase";
-                
+
                 $python_output = shell_exec($command);
                 // print_r($python_output);
                 // exit;
-                
+
                 $result = json_decode($python_output);
                 if ($result->status == 'success') {
                     $candidate_name = $result->data->candidate_name;
@@ -1036,10 +1173,8 @@ function add_custom_button_to_edit_page()
 
                         update_post_meta($post_id, 'cv_report_image', $candidate_image);
                         update_post_meta($post_id, 'python_image', true);
-
-                    }                    
+                    }
                 }
-
             }
 
             if (isset($_GET['post']) && isset($_GET['action']) && $_GET['action'] == 'edit') {
@@ -1049,209 +1184,210 @@ function add_custom_button_to_edit_page()
                 $token = md5($post_id . $expireTimestamp . $secretKey);
                 $link = site_url('/paid-services-report-email-template/') . "?cvID=" . urlencode($post_id) . "&token=" . urlencode($token) . "&expires=" . urlencode($expireTimestamp);
                 $status_done = get_post_meta($post_id, 'status-done', true);
-                ?>
-<script type="text/javascript">
-document.addEventListener('DOMContentLoaded', function() {
-    $ = jQuery
-    var postType = $('#post_type').val();
-    if (postType === 'paid_services') {
-        var buttonHtml = '<div id="send-email-box" class="misc-pub-section">' +
-            '<a href="#" id="send-email-button" class="button">Email Report</a>';
-        <?php if ($status_done === 'Done') {?>
-        buttonHtml +=
-            '<a href="<?php echo $link; ?>" id="view-report-button" class="button" target="_blank" style="margin-left: 15px;">View Report</a>';
-        <?php }?>
-        buttonHtml += '</div>';
-        $('#submitdiv').append(buttonHtml);
+    ?>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        $ = jQuery
+                        var postType = $('#post_type').val();
+                        if (postType === 'paid_services') {
+                            var buttonHtml = '<div id="send-email-box" class="misc-pub-section">' +
+                                '<a href="#" id="send-email-button" class="button">Email Report</a>';
+                            <?php if ($status_done === 'Done') { ?>
+                                buttonHtml +=
+                                    '<a href="<?php echo $link; ?>" id="view-report-button" class="button" target="_blank" style="margin-left: 15px;">View Report</a>';
+                            <?php } ?>
+                            buttonHtml += '</div>';
+                            $('#submitdiv').append(buttonHtml);
 
-        $('#send-email-button').on('click', function(e) {
-            e.preventDefault();
+                            $('#send-email-button').on('click', function(e) {
+                                e.preventDefault();
 
-            $('#emailModal').css('display', 'block');
-        });
+                                $('#emailModal').css('display', 'block');
+                            });
 
-        $('.close').on('click', function() {
-            $('#emailModal').css('display', 'none');
-        });
+                            $('.close').on('click', function() {
+                                $('#emailModal').css('display', 'none');
+                            });
 
-        $(window).on('click', function(event) {
-            if (event.target == $('#emailModal')[0]) {
-                $('#emailModal').css('display', 'none');
-            }
-        });
+                            $(window).on('click', function(event) {
+                                if (event.target == $('#emailModal')[0]) {
+                                    $('#emailModal').css('display', 'none');
+                                }
+                            });
 
-        $('#sendEmail').on('click', function() {
-            var introduction = acf.getField('field_65ba0615b424a').val();
-            var summary = acf.getField('field_65ba0eb9a48c9').val();
-            var full_name = acf.getField('field_65cb011b6a30f').val();
-            var current = acf.getField('field_65cb01546a311').val();
-            var past = acf.getField('field_65cb013a6a310').val();
-            var education = acf.getField('field_65cb01676a312').val();
-            var picture = acf.getField('field_65bb6a90ae963').val();
-            var layout = acf.getField('field_65bb7dd48e573').val();
-            var content_length = acf.getField('field_65bb7f816f3e3').val();
-            var spelling_grammer = acf.getField('field_65bb7fb46f3e4').val();
-            var font_constent = acf.getField('field_65bb7fd16f3e5').val();
-            var keyword = acf.getField('field_65bb7ff26f3e6').val();
-            var bullet_details = acf.getField('field_65bb80106f3e7').val();
-            var concolustion = acf.getField('field_65bb80326f3e8').val();
-            var repeaterData = [];
-            $('.acf-repeater .acf-row').each(function() {
-                var dataKey = $(this).find('[data-name="chart_data"]').val();
-                var keyword11 = $(this).find('.acf-field-65c9c44fe9487 input').val();
-                var value11 = $(this).find('.acf-field-65c9c45be9488 input').val();
+                            $('#sendEmail').on('click', function() {
+                                var introduction = acf.getField('field_65ba0615b424a').val();
+                                var summary = acf.getField('field_65ba0eb9a48c9').val();
+                                var full_name = acf.getField('field_65cb011b6a30f').val();
+                                var current = acf.getField('field_65cb01546a311').val();
+                                var past = acf.getField('field_65cb013a6a310').val();
+                                var education = acf.getField('field_65cb01676a312').val();
+                                var picture = acf.getField('field_65bb6a90ae963').val();
+                                var layout = acf.getField('field_65bb7dd48e573').val();
+                                var content_length = acf.getField('field_65bb7f816f3e3').val();
+                                var spelling_grammer = acf.getField('field_65bb7fb46f3e4').val();
+                                var font_constent = acf.getField('field_65bb7fd16f3e5').val();
+                                var keyword = acf.getField('field_65bb7ff26f3e6').val();
+                                var bullet_details = acf.getField('field_65bb80106f3e7').val();
+                                var concolustion = acf.getField('field_65bb80326f3e8').val();
+                                var repeaterData = [];
+                                $('.acf-repeater .acf-row').each(function() {
+                                    var dataKey = $(this).find('[data-name="chart_data"]').val();
+                                    var keyword11 = $(this).find('.acf-field-65c9c44fe9487 input').val();
+                                    var value11 = $(this).find('.acf-field-65c9c45be9488 input').val();
 
-                repeaterData.push({
-                    dataKey: dataKey,
-                    keyword1: keyword11,
-                    value1: value11,
-                });
-            });
-            var repeaterDataJSON = JSON.stringify(repeaterData);
+                                    repeaterData.push({
+                                        dataKey: dataKey,
+                                        keyword1: keyword11,
+                                        value1: value11,
+                                    });
+                                });
+                                var repeaterDataJSON = JSON.stringify(repeaterData);
 
 
-            $.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'send_custom_email',
-                    introduction: introduction,
-                    summary: summary,
-                    full_name: full_name,
-                    current: current,
-                    past: past,
-                    education: education,
-                    picture: picture,
-                    layout: layout,
-                    content_length: content_length,
-                    spelling_grammer: spelling_grammer,
-                    font_constent: font_constent,
-                    keyword: keyword,
-                    bullet_details: bullet_details,
-                    concolustion: concolustion,
-                    message: tinymce.get('message').getContent(),
-                    subject: $('#subject').val(),
-                    cvid: <?php echo $post_id ?>,
-                    repeater_data: repeaterDataJSON,
-                    user_email: $('#email').val()
+                                $.ajax({
+                                    url: ajaxurl,
+                                    type: 'POST',
+                                    data: {
+                                        action: 'send_custom_email',
+                                        introduction: introduction,
+                                        summary: summary,
+                                        full_name: full_name,
+                                        current: current,
+                                        past: past,
+                                        education: education,
+                                        picture: picture,
+                                        layout: layout,
+                                        content_length: content_length,
+                                        spelling_grammer: spelling_grammer,
+                                        font_constent: font_constent,
+                                        keyword: keyword,
+                                        bullet_details: bullet_details,
+                                        concolustion: concolustion,
+                                        message: tinymce.get('message').getContent(),
+                                        subject: $('#subject').val(),
+                                        cvid: <?php echo $post_id ?>,
+                                        repeater_data: repeaterDataJSON,
+                                        user_email: $('#email').val()
 
-                },
-                beforeSend: function() {
-                    $('#spinner').show();
-                    $('#sendEmail').prop('disabled', true);
-                },
+                                    },
+                                    beforeSend: function() {
+                                        $('#spinner').show();
+                                        $('#sendEmail').prop('disabled', true);
+                                    },
 
-                complete: function() {
-                    $('#spinner').hide();
-                    $('#sendEmail').prop('disabled', false);
-                },
-                success: function(response) {
-                    // var jsonResponse = JSON.parse(response);
-                    alert("Email sent successfully!");
+                                    complete: function() {
+                                        $('#spinner').hide();
+                                        $('#sendEmail').prop('disabled', false);
+                                    },
+                                    success: function(response) {
+                                        // var jsonResponse = JSON.parse(response);
+                                        alert("Email sent successfully!");
 
-                    window.location.href = '/wp-admin/edit.php?post_type=paid_services';
+                                        window.location.href = '/wp-admin/edit.php?post_type=paid_services';
 
-                }
+                                    }
 
-            });
-        });
-    }
-})
-</script>
-<style>
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-}
+                                });
+                            });
+                        }
+                    })
+                </script>
+                <style>
+                    .modal {
+                        display: none;
+                        position: fixed;
+                        z-index: 1;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        overflow: auto;
+                        background-color: rgba(0, 0, 0, 0.4);
+                    }
 
-.modal-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
+                    .modal-content {
+                        background-color: #fefefe;
+                        margin: 10% auto;
+                        padding: 20px;
+                        border: 1px solid #888;
+                        width: 80%;
+                    }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
+                    .close {
+                        color: #aaa;
+                        float: right;
+                        font-size: 28px;
+                        font-weight: bold;
+                    }
 
-.close:hover {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
+                    .close:hover {
+                        color: black;
+                        text-decoration: none;
+                        cursor: pointer;
+                    }
 
-.spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    border-top: 4px solid #3498db;
-    width: 20px;
-    height: 20px;
-    animation: spin 1s linear infinite;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -10px;
-    margin-left: -10px;
-    display: none;
-}
+                    .spinner {
+                        border: 4px solid rgba(0, 0, 0, 0.1);
+                        border-radius: 50%;
+                        border-top: 4px solid #3498db;
+                        width: 20px;
+                        height: 20px;
+                        animation: spin 1s linear infinite;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        margin-top: -10px;
+                        margin-left: -10px;
+                        display: none;
+                    }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+                    @keyframes spin {
+                        0% {
+                            transform: rotate(0deg);
+                        }
 
-    100% {
-        transform: rotate(360deg);
-    }
-}
-</style>
-<?php
-$emailshow = get_post_meta($post_id, 'email', true);
+                        100% {
+                            transform: rotate(360deg);
+                        }
+                    }
+                </style>
+                <?php
+                $emailshow = get_post_meta($post_id, 'email', true);
                 $oldsubject = get_post_meta($post_id, 'report_subject', true);
                 ?>
-<div id="emailModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <label for="email">Mail will be sent to:</label>
-        <input type="text" id="email" value="<?php echo esc_attr($emailshow); ?>">
-        <br><br>
-        <label for="subject">Subject:</label>
-        <input type="text" id="subject" name="subject" value="<?php echo esc_attr($oldsubject); ?>">
-        <br>
-        <label for="message">Message:</label>
+                <div id="emailModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <label for="email">Mail will be sent to:</label>
+                        <input type="text" id="email" value="<?php echo esc_attr($emailshow); ?>">
+                        <br><br>
+                        <label for="subject">Subject:</label>
+                        <input type="text" id="subject" name="subject" value="<?php echo esc_attr($oldsubject); ?>">
+                        <br>
+                        <label for="message">Message:</label>
+                        <?php
+                        wp_editor('', 'message', array(
+                            'textarea_name' => 'message',
+                            'textarea_rows' => 12,
+                            'media_buttons' => false,
+                            'tinymce' => array(
+                                'toolbar1' => 'bold italic underline strikethrough | bullist numlist | outdent indent | alignleft aligncenter alignright alignjustify',
+                                'toolbar2' => '',
+                            ),
+                        ));
+                        ?>
+                        <button id="sendEmail" class="button">Send Email</button>
+                    </div>
+                </div>
+
+
+
         <?php
-wp_editor('', 'message', array(
-                    'textarea_name' => 'message',
-                    'textarea_rows' => 12,
-                    'media_buttons' => false,
-                    'tinymce' => array(
-                        'toolbar1' => 'bold italic underline strikethrough | bullist numlist | outdent indent | alignleft aligncenter alignright alignjustify',
-                        'toolbar2' => '',
-                    ),
-                ));
-                ?>
-        <button id="sendEmail" class="button">Send Email</button>
-    </div>
-</div>
-
-
-
-<?php
-}
+            }
         }
-    }}
+    }
+}
 
 add_action('wp_ajax_send_custom_email', 'send_custom_email');
 
@@ -1307,9 +1443,9 @@ function send_custom_email()
     $token = md5($cvid . $expireTimestamp . $secretKey);
 
     $link = site_url('/paid-services-report-email-template/')
-    . "?cvID=" . urlencode($cvid)
-    . "&token=" . urlencode($token)
-    . "&expires=" . urlencode($expireTimestamp);
+        . "?cvID=" . urlencode($cvid)
+        . "&token=" . urlencode($token)
+        . "&expires=" . urlencode($expireTimestamp);
     update_post_meta($cvid, 'expiration_timestamp', $expireTimestamp);
     $headers = array('Content-Type: text/html; charset=UTF-8');
     $result = wp_mail($userEmail, $subject, "<table border='0' cellpadding='0' cellspacing='0' width='100%' class='wrapperBody' style='max-width:600px'>
@@ -1410,74 +1546,74 @@ function custom_button_script()
     global $post;
     if ($post->post_type == 'paid_services') {
         ?>
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-    $('#custom_update_button').on('click', function(e) {
-        e.preventDefault();
-        $('#loader').show();
-        var post_id = <?php echo $post->ID; ?>;
-        var profile_name = acf.getField('field_65cdbfd61089e').val();
-        var introduction = acf.getField('field_65ba0615b424a').val();
-        var summary = acf.getField('field_65ba0eb9a48c9').val();
-        var full_name = acf.getField('field_65cb011b6a30f').val();
-        var current = acf.getField('field_65cb01546a311').val();
-        var past = acf.getField('field_65cb013a6a310').val();
-        var education = acf.getField('field_65cb01676a312').val();
-        var picture = acf.getField('field_65bb6a90ae963').val();
-        var layout = acf.getField('field_65bb7dd48e573').val();
-        var content_length = acf.getField('field_65bb7f816f3e3').val();
-        var spelling_grammer = acf.getField('field_65bb7fb46f3e4').val();
-        var font_constent = acf.getField('field_65bb7fd16f3e5').val();
-        var keyword = acf.getField('field_65bb7ff26f3e6').val();
-        var bullet_details = acf.getField('field_65bb80106f3e7').val();
-        var concolustion = acf.getField('field_65bb80326f3e8').val();
-        var repeaterData = [];
-        $('.acf-repeater .acf-row').each(function() {
-            var dataKey = $(this).find('[data-name="chart_data"]').val();
-            var keyword11 = $(this).find('.acf-field-65c9c44fe9487 input').val();
-            var value11 = $(this).find('.acf-field-65c9c45be9488 input').val();
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                $('#custom_update_button').on('click', function(e) {
+                    e.preventDefault();
+                    $('#loader').show();
+                    var post_id = <?php echo $post->ID; ?>;
+                    var profile_name = acf.getField('field_65cdbfd61089e').val();
+                    var introduction = acf.getField('field_65ba0615b424a').val();
+                    var summary = acf.getField('field_65ba0eb9a48c9').val();
+                    var full_name = acf.getField('field_65cb011b6a30f').val();
+                    var current = acf.getField('field_65cb01546a311').val();
+                    var past = acf.getField('field_65cb013a6a310').val();
+                    var education = acf.getField('field_65cb01676a312').val();
+                    var picture = acf.getField('field_65bb6a90ae963').val();
+                    var layout = acf.getField('field_65bb7dd48e573').val();
+                    var content_length = acf.getField('field_65bb7f816f3e3').val();
+                    var spelling_grammer = acf.getField('field_65bb7fb46f3e4').val();
+                    var font_constent = acf.getField('field_65bb7fd16f3e5').val();
+                    var keyword = acf.getField('field_65bb7ff26f3e6').val();
+                    var bullet_details = acf.getField('field_65bb80106f3e7').val();
+                    var concolustion = acf.getField('field_65bb80326f3e8').val();
+                    var repeaterData = [];
+                    $('.acf-repeater .acf-row').each(function() {
+                        var dataKey = $(this).find('[data-name="chart_data"]').val();
+                        var keyword11 = $(this).find('.acf-field-65c9c44fe9487 input').val();
+                        var value11 = $(this).find('.acf-field-65c9c45be9488 input').val();
 
-            repeaterData.push({
-                dataKey: dataKey,
-                keyword1: keyword11,
-                value1: value11,
+                        repeaterData.push({
+                            dataKey: dataKey,
+                            keyword1: keyword11,
+                            value1: value11,
+                        });
+                    });
+                    var repeaterDataJSON = JSON.stringify(repeaterData);
+
+
+
+                    var data = {
+                        'action': 'update_all_fields',
+                        'post_id': post_id,
+                        'profile_name': profile_name,
+                        'introduction': introduction,
+                        'summary': summary,
+                        'full_name': full_name,
+                        'current': current,
+                        'past': past,
+                        'education': education,
+                        'picture': picture,
+                        'layout': layout,
+                        'content_length': content_length,
+                        'spelling_grammer': spelling_grammer,
+                        'font_constent': font_constent,
+                        'keyword': keyword,
+                        'bullet_details': bullet_details,
+                        'concolustion': concolustion,
+                        repeater_data: repeaterDataJSON,
+
+
+                    };
+                    $.post(ajaxurl, data, function(response) {
+                        $('#loader').hide();
+                        alert('Fields updated successfully!');
+                    });
+                });
             });
-        });
-        var repeaterDataJSON = JSON.stringify(repeaterData);
-
-
-
-        var data = {
-            'action': 'update_all_fields',
-            'post_id': post_id,
-            'profile_name': profile_name,
-            'introduction': introduction,
-            'summary': summary,
-            'full_name': full_name,
-            'current': current,
-            'past': past,
-            'education': education,
-            'picture': picture,
-            'layout': layout,
-            'content_length': content_length,
-            'spelling_grammer': spelling_grammer,
-            'font_constent': font_constent,
-            'keyword': keyword,
-            'bullet_details': bullet_details,
-            'concolustion': concolustion,
-            repeater_data: repeaterDataJSON,
-
-
-        };
-        $.post(ajaxurl, data, function(response) {
-            $('#loader').hide();
-            alert('Fields updated successfully!');
-        });
-    });
-});
-</script>
+        </script>
 <?php
-}
+    }
 }
 
 add_action('wp_ajax_update_all_fields', 'update_all_fields_callback');

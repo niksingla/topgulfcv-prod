@@ -19,9 +19,12 @@ get_header();
 </style>
 <section class="banner-sec">
     <div class="video-container">
-        <video playsinline autoplay muted loop preload="none" style="display:none;" class="lazy-video">
-            <source data-src="<?php the_field('banner_video', 1901); ?>" type="video/mp4">
-        </video> 
+        <link rel="preload" href="<?php the_field('banner_poster', 1901); ?>" as="image" fetchpriority="high">
+        <video playsinline autoplay muted loop preload="none"                                 
+            poster="<?php the_field('banner_poster', 1901); ?>"
+            class="lazy-video-testi"
+            data-src="<?php the_field('banner_video', 1901) ?>" >                
+        </video>
     </div>
 </section>
 <section class="about-sec">

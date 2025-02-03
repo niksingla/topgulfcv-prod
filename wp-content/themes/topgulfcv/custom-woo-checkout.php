@@ -272,6 +272,42 @@ function custom_input_html($output, $key, $args, $value){
 }
 add_filter( 'woocommerce_form_field', 'custom_input_html', 1999, 4 );
 
+function updated_woocommerce_thankyou_order_received_text($order){
+    $message = get_option( 'thankyou_page_text', 'Thank you. Your order has been received' );
+    return $message;
+}
+add_filter( 'woocommerce_thankyou_order_received_text', 'updated_woocommerce_thankyou_order_received_text', 10, 1);
+
+function updated_woocommerce_settings_pages($settings){
+    $thankyou_section = [        
+        'id' => 'thankyou_page_text_section',
+        'type' => 'sectionend',
+    ];
+    array_unshift($settings, $thankyou_section);
+    $thankyou_section = [
+        'title' => 'Button Text',        
+        'id' => 'thankyou_page_btn_text',
+        'type' => 'text',
+    ];
+    array_unshift($settings, $thankyou_section);    
+    $thankyou_section = [
+        'title' => 'Main Headline on Receipt page',        
+        'id' => 'thankyou_page_text',
+        'type' => 'text',
+    ];
+    array_unshift($settings, $thankyou_section);
+    $thankyou_section = [
+        'title' => 'Thankyou page text',
+        'desc' => 'Update the thank you page text from here',
+        'id' => 'thankyou_page_text_title',
+        'type' => 'title',
+    ];
+    array_unshift($settings, $thankyou_section);
+
+    return $settings;
+}
+add_filter( 'woocommerce_settings_pages', 'updated_woocommerce_settings_pages', 10, 1);
+
 if(false){
 
     // Add custom settings tab

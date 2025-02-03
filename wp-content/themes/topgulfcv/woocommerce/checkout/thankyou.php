@@ -50,7 +50,7 @@ if ( $order ) :
         <ul class="woocommerce-order-overview woocommerce-thankyou-order-details order_details">
     <div class="checkout_btn_row">  
         <div class="checkout_shooping">
-           <a href = "/paid-services/" class="red-btn"> Continue Shopping</a>
+           <a href = "/paid-services/" class="red-btn"> <?= get_option('thankyou_page_btn_text','Continue Shopping'); ?></a>
         </div>
     </div>
             <li class="woocommerce-order-overview__order order">

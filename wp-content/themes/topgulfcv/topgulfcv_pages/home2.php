@@ -20,6 +20,28 @@ get_header();
     <!-- banner section start -->
     <section class="banner-sec">
         <div class="banner-inner">
+            <?php 
+            $set = get_field('heading_set');
+            if ($set) : 
+                $style = '';
+                if (!empty($set['font_size'])) $style .= "font-size:{$set['font_size']}px !important;";
+                if (!empty($set['font_color'])) $style .= "color:{$set['font_color']} !important;";
+                if (!empty($set['font_color_span'])) $style .= "color:{$set['font_color_span']} !important;";
+                ?>
+                <style>
+                    @media screen and (min-width: 1400px){
+                        .banner-inner .slider_content h1{
+                            <?php if (!empty($set['font_size'])) echo "font-size:{$set['font_size']}px ;"; ?>
+                        }
+                    }
+                    .banner-inner .slider_content h1{
+                        <?php if (!empty($set['font_color'])) echo "color:{$set['font_color']} !important;";?>                    
+                    }
+                    .banner-inner .slider_content h1 span{
+                        <?php if (!empty($set['font_color_span'])) echo "color:{$set['font_color_span']} !important;"; ?>
+                    }
+                </style>            
+            <?php endif; ?>
             <div class="owl-carousel owl-theme banner-slider owlcrousel_two">
             <?php
                 $paged = get_query_var('paged') ? get_query_var('paged') : 1; // setup pagination
@@ -218,24 +240,6 @@ get_header();
 
 
             </div>
-            <!--  <div class="row align-items-center flex-row-reverse">
-                <div class="col-lg-5 col-md-6 col-12">
-                    <div class="content-img">
-                        <img src="<?php echo get_template_directory_uri(); ?>/images/content-img-2.png" alt="content-img-1" class="img-fluid">
-                    </div>
-                </div>
-                <div class="col-lg-7 col-md-6 col-12">
-                    <div class="content-section-text">
-                        <h3 class="section-title">
-                            We are Trusted by Popular
-                            <span>800+ Company</span>
-                            <p class="mt-2 mt-md-4">
-                                
-                            </p>
-                        </h3>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </section>
 
@@ -318,37 +322,6 @@ get_header();
             </div>
           
         </div>
-        <!-- <div class="feedback-inner">
-                <div class="bgseeker">
-                    <img class="w-100" src="images/Testimonial-Background.png" alt="Background">
-                    <div class="pro_one">
-
-                        <a href="#" data-bs-toggle="popover" data-bs-placement="right"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/testimonial-images.png" alt="profile"></a>
-                    </div>
-                    <div class="pro_two">
-                        <a href="#" data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/testimonial-image2.png" alt="profile"></a>
-                    </div>
-                    <div class="pro_three">
-                        <a href="#" data-bs-toggle="popover" data-bs-placementt="right"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/Testimonial-Images6.png" alt="profile"></a>
-                    </div>
-                    <div class="pro_four">
-                        <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/testimonial-image3.png" alt="profile"></a>
-                    </div>
-                    <div class="pro_six">
-                        <a href="#" data-bs-toggle="popover" data-bs-placement="left"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/Testimonial-Image5.png" alt="profile"></a>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </section>
     <?php
@@ -419,10 +392,8 @@ get_header();
                     <?php echo the_field('ready_to_make_para',5); ?>
                 </p>
                 <div class="d-flex justify-content-center readm">
-                    <a href="<?php echo the_field('free_services_url',5); ?>" class="red-btn my-2 my-sm-4">Free Services
-                    </a>
-                    <a href="<?php echo the_field('paid_services_url',5); ?>" class="red-btn my-2 my-sm-4 bg-black">Paid
-                        Services</a>
+                    <a href="<?php echo the_field('free_services_url',5); ?>" class="red-btn my-2 my-sm-4"><?php the_field('button_text');?></a>
+                    <a href="<?php echo the_field('paid_services_url',5); ?>" class="red-btn my-2 my-sm-4 bg-black"><?php the_field('second_button_text'); ?></a>
                 </div>
                 <p>
                     <?php echo the_field('ready_to_make_2nd_para',5); ?>
@@ -430,17 +401,6 @@ get_header();
             </div>
         </div>
     </section>
-    <!-- <section class="new-cta">
-        <div class="container c-container">
-            <div class="content-sec-inner text-center">
-                <h4 class="section-title">Ready to make the move get noticed by employers in the region? </h4>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="#" class="red-btn my-2 my-sm-4">Free Services </a>
-                    <a href="#" class="red-btn my-2 my-sm-4 bg-black">Paid Services</a>
-                </div>
-            </div>
-        </div>
-    </section> -->
 </main><!-- #main -->
 
 <?php

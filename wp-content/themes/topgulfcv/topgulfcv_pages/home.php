@@ -257,24 +257,6 @@ get_header();
 
                         </div>
             </div>
-            <!--  <div class="row align-items-center flex-row-reverse">
-                <div class="col-lg-5 col-md-6 col-12">
-                    <div class="content-img">
-                        <img src="<?php echo get_template_directory_uri(); ?>/images/content-img-2.png" alt="content-img-1" class="img-fluid">
-                    </div>
-                </div>
-                <div class="col-lg-7 col-md-6 col-12">
-                    <div class="content-section-text">
-                        <h3 class="section-title">
-                            We are Trusted by Popular
-                            <span>800+ Company</span>
-                            <p class="mt-2 mt-md-4">
-                                
-                            </p>
-                        </h3>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </section>
     <section class="feedback want-hide">
@@ -356,37 +338,6 @@ get_header();
             </div>
           
         </div>
-        <!-- <div class="feedback-inner">
-                <div class="bgseeker">
-                    <img class="w-100" src="images/Testimonial-Background.png" alt="Background">
-                    <div class="pro_one">
-
-                        <a href="#" data-bs-toggle="popover" data-bs-placement="right"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/testimonial-images.png" alt="profile"></a>
-                    </div>
-                    <div class="pro_two">
-                        <a href="#" data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/testimonial-image2.png" alt="profile"></a>
-                    </div>
-                    <div class="pro_three">
-                        <a href="#" data-bs-toggle="popover" data-bs-placementt="right"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/Testimonial-Images6.png" alt="profile"></a>
-                    </div>
-                    <div class="pro_four">
-                        <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/testimonial-image3.png" alt="profile"></a>
-                    </div>
-                    <div class="pro_six">
-                        <a href="#" data-bs-toggle="popover" data-bs-placement="left"
-                            data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus. "><img
-                                src="images/Testimonial-Image5.png" alt="profile"></a>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </section>
    
@@ -470,17 +421,6 @@ get_header();
             </div>
         </div>
     </section>
-    <!-- <section class="new-cta">
-        <div class="container c-container">
-            <div class="content-sec-inner text-center">
-                <h4 class="section-title">Ready to make the move get noticed by employers in the region? </h4>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="#" class="red-btn my-2 my-sm-4">Free Services </a>
-                    <a href="#" class="red-btn my-2 my-sm-4 bg-black">Paid Services</a>
-                </div>
-            </div>
-        </div>
-    </section> -->
 </main><!-- #main -->
 
 <?php

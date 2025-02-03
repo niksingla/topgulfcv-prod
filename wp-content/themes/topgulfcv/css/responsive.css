@@ -214,8 +214,12 @@
   }
 
   .owl-carousel.owl-theme.banner-slider.owl-loaded.owl-drag img {
-    max-height: 340px;
+    max-height: 650px;
+    object-fit: cover;
   }
+  .banner-slider button.owl-prev {top:50%;}
+
+  .banner-slider button.owl-next {top:50%;}
 
   #menu-primary_menu {
     display: inline-block !important;
@@ -389,9 +393,12 @@
   .banner-inner-content {
     position: absolute;
     left: 50%;
-    top: 35%;
-
     width: 100%;
+    transform: translate(-50%, -93%);
+  }
+  .owl-carousel.owl-theme.banner-slider.owl-loaded.owl-drag img {
+    height: 300px;
+    object-fit: cover;
   }
 
   li.menu-item.cart-icon i {
@@ -571,9 +578,6 @@
     width: 100%;
     padding-left: 10px;
   }
-
-  margin-top: 10px;
-
 
 }
 

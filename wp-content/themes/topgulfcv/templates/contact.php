@@ -7,9 +7,12 @@ get_header();
 <main id="primary" class="site-main">
 <section class="banner-sec">
     <div class="video-container">
-        <video playsinline autoplay muted loop preload="none" style="display:none;" class="lazy-video">
-            <source data-src="<?php the_field('contact_us_video') ?>" type="video/mp4">
-         </video>   
+        <link rel="preload" href="<?php the_field('contact_us_poster'); ?>" as="image" fetchpriority="high">
+        <video playsinline autoplay muted loop preload="none"                                 
+            poster="<?php the_field('contact_us_poster'); ?>"
+            class="lazy-video-contact"
+            data-src="<?php the_field('contact_us_video') ?>" >                
+        </video>
     </div>
 
 

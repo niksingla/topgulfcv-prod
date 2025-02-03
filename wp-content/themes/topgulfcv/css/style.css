@@ -1376,10 +1376,10 @@ header {
   padding-bottom: 120px;
 }
 
-.page-template-home2 .slider_content {
+/* .page-template-home2 .slider_content {
   top: 0;
   background: radial-gradient(circle, rgba(19, 18, 18, 0.3) 30%, rgba(245, 241, 241, 0.3) 100%);
-}
+} */
 
 .slider_content {
   position: absolute;
@@ -2694,7 +2694,7 @@ td.product-price {
   left: 0;
   height: 100%;
   width: 100%;
-  background: radial-gradient(circle, rgba(19, 18, 18, 0.5) 75%, rgba(245, 241, 241, 0.3) 100%);
+  background: radial-gradient(circle, rgba(19, 18, 18, 0.3) 30%, rgba(245, 241, 241, 0.3) 100%);
 }
 
 .banner-sec {
@@ -3780,10 +3780,6 @@ header.sticky_header {
 
   .quote-footer strong img {
     width: 40px;
-  }
-  .banner-slider .owl-stage-outer {
-    /* overflow: inherit; */
-    height: inherit;
   }
 }
 

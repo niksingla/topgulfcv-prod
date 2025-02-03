@@ -268,16 +268,50 @@
     });
     document.addEventListener("DOMContentLoaded", function () {
         const video = document.querySelector(".lazy-video-home");
-        const videoUrl = video.dataset.src;
-        if(videoUrl){
-            fetch(videoUrl)
-                .then(response => response.blob())
-                .then(blob => {
-                    const localUrl = URL.createObjectURL(blob);
-                    video.src = localUrl;
-                    video.load();
-                })
-                .catch(error => console.error("Error loading video:", error));
+        if(video){
+            const videoUrl = video.dataset.src;
+            if(videoUrl){
+                fetch(videoUrl)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const localUrl = URL.createObjectURL(blob);
+                        video.src = localUrl;
+                        video.load();
+                    })
+                    .catch(error => console.error("Error loading video:", error));
+            }
+        }
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const video_contact = document.querySelector(".lazy-video-contact");
+        if(video_contact){
+            const contact_videoUrl = video_contact.dataset.src;
+            if(contact_videoUrl){
+                fetch(contact_videoUrl)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const localUrl = URL.createObjectURL(blob);
+                        video_contact.src = localUrl;
+                        video_contact.load();
+                    })
+                    .catch(error => console.error("Error loading video:", error));
+            }
+        }
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const video_testimon = document.querySelector(".lazy-video-testi");
+        if(video_testimon){
+            const testi_videoUrl = video_testimon.dataset.src;
+            if(testi_videoUrl){
+                fetch(testi_videoUrl)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const localUrl = URL.createObjectURL(blob);
+                        video_testimon.src = localUrl;
+                        video_testimon.load();
+                    })
+                    .catch(error => console.error("Error loading video:", error));
+            }
         }
     });
     
